@@ -14,12 +14,12 @@ declare const global: any
 
 export default async function set() {
     let set: boolean = false
-    
+
     createObject()
     setLogger()
     createAxiosObject()
     setAxiosInstance()
-    try {     
+    try {
         const configSet: boolean = await setConfig()
         if (!configSet) {
             return
@@ -58,7 +58,7 @@ function setLogger() {
     })
 }
 
-function  createAxiosObject(){
+function createAxiosObject() {
     Object.defineProperty(global.project, "axios", { value: {} })
 }
 
@@ -79,43 +79,43 @@ function setAxiosInstance() {
 function setConfig() {
     return new Promise(async (resolve, reject) => {
         const argv = require('minimist')(process.argv.slice(2));
-        if (!Object.keys(argv).includes("c")){
+        if (!Object.keys(argv).includes("c")) {
             reject("Argument 'c' not found")
             return
         }
 
         const configFilePath = argv.c
         const filePathExists = fs.existsSync(configFilePath)
-        if (!filePathExists){
+        if (!filePathExists) {
             reject(`Invalid config file path '${configFilePath}'`)
             return
         }
 
         const configFileContents = fs.readFileSync(configFilePath)
-        let config:any = parseJSON.default(configFileContents)
-        if (!config){
+        let config: any = parseJSON.default(configFileContents)
+        if (!config) {
             reject(`Config file not valid JSON`)
         }
-        
-        if (!Object.keys(config).every((key) => ["cookies_base64", "instagram_handle", "latest_x_posts"].includes(key))){
+
+        if (!Object.keys(config).every((key) => ["cookies_base64", "instagram_handle", "latest_x_posts", "output_file_location"].includes(key))) {
             reject(`Config file has invalid keys`)
             return
         }
 
-        if (typeof config.cookies_base64  !== "string" || typeof config.instagram_handle  !== "string" || isNaN(config.latest_x_posts)){
+        if (typeof config.cookies_base64 !== "string" || typeof config.instagram_handle !== "string" || isNaN(config.latest_x_posts) || typeof config.output_file_location !== "string") {
             reject(`Config file has invalid values`)
             return
         }
 
-        let cookies = parseJSON.default(Buffer.from(config.cookies_base64, 'base64').toString('ascii') )
-        if (!cookies){
+        let cookies = parseJSON.default(Buffer.from(config.cookies_base64, 'base64').toString('ascii'))
+        if (!cookies) {
             reject(`Cookies couldn't be parsed`)
             return
         }
         delete config.cookies_base64
 
         config.cookies = cookies
-        
+
         global['project' as string]['config'] = config
         resolve(null)
     })

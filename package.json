@@ -15,6 +15,7 @@
   "dependencies": {
     "axios": "^1.4.0",
     "axios-logger": "^2.6.2",
+    "json-prune": "^1.1.0",
     "minimist": "^1.2.8",
     "valid-url": "^1.0.9",
     "winston": "^3.9.0",

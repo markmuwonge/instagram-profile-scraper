@@ -1,8 +1,11 @@
 const helperFunctions = require("./helper-functions")
+const getGraphImageNodeInfo = require("./get-graph-image-node-info")
+const getGraphVideoNodeInfo = require("./get-graph-video-node-info")
+const getGraphSidecarNodeInfo = require("./get-graph-sidecar-node-info")
 
 export function getInstagramProfilePostBatch(objectResponseBody: any, includeProfileId: boolean) {
     helperFunctions.getLoggerInstance().info("Getting instagram profile post batch")
-    let postBatch:any = undefined
+    let postBatch: any = undefined
 
     try {
         const user = objectResponseBody.data.user
@@ -15,22 +18,22 @@ export function getInstagramProfilePostBatch(objectResponseBody: any, includePro
         const posts: any[] = edgeOwnerToTimelineMedia.edges.map((edge: any) => {
             return edge.node
         })
-        .map((node: any) => {
-                const typeName = node.__typename
-                if (typeName === "GraphImage") {
-                    // return graphImageNodeInfoRetriever.retrieve("jsonObject", "edge_owner_to_timeline_media", node);
+            .map((node: any) => {
+                const typename = require("./get-node-typename").default(node)
+                if (typename === "GraphImage") {
+                    return getGraphImageNodeInfo.default("objectResponseBody", "edge_owner_to_timeline_media", node);
                 }
-                else if (typeName === "GraphVideo") {
-                    // return graphVideoNodeInfoRetriever.retrieve("jsonObject", "edge_owner_to_timeline_media", node);
+                else if (typename === "GraphVideo") {
+                    return getGraphVideoNodeInfo.default("objectResponseBody", "edge_owner_to_timeline_media", node);
                 }
-                else if (typeName === "GraphSidecar") {
-                    // return graphSidecarNodeInfoRetriever.retrieve("jsonObject", "edge_owner_to_timeline_media", node);
+                else if (typename === "GraphSidecar") {
+                    return getGraphSidecarNodeInfo.default("objectResponseBody", "edge_owner_to_timeline_media", node);
                 }
                 else {
                     return undefined;
                 }
             })
-        .filter((nodeInfo: any) => nodeInfo !== undefined)
+            .filter((nodeInfo: any) => nodeInfo !== undefined)
         postBatch = {}
         if (userId) postBatch.profile_id = userId
         postBatch.total_profile_posts = totalProfilePosts

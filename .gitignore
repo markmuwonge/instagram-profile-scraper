@@ -1,3 +1,4 @@
-/*/microservices/*/node_modules
-/*/microservices/*/dist
-/*/microservices/*/logs
+node_modules
+dist
+logs
+config.json
