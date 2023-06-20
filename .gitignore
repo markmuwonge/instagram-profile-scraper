@@ -1,4 +1,4 @@
-node_modules
-dist
-logs
-config.json
+/node_modules
+/dist
+/logs
+/config.json
